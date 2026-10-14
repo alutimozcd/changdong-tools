@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#214b40">
+  <meta name="description" content="以北京时间读懂欧洲时间。实时查看荷兰、比利时、卢森堡、英国、法国、德国时间，双向转换并自动识别夏令时，轻松安排跨国会议。">
+  <title>时差 · 北京与欧洲时间</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#converter">跳到时间转换</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="时差首页"><span class="brand-mark" aria-hidden="true">◷</span><strong>时差<span class="brand-en">TIME BRIDGE</span></strong></a>
+    <nav aria-label="主导航"><a href="#clocks">现在几点</a><a href="#converter">时间转换</a><a href="#meeting">约个好时间</a><a href="#learn">时区小课堂 <span aria-hidden="true">↗</span></a></nav>
+    <span class="header-note"><span class="status-dot"></span>以北京为起点</span>
+  </header>
+
+  <main id="top" class="page-shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="tiny-line"></span> BEIJING ↔ EUROPE</p>
+        <h1 id="hero-title">从北京时间，<br>看懂<span>欧洲时间。</span></h1>
+        <p class="hero-description">不用背时区，也不用心算。选一个日期，<br class="desktop-break">让时钟告诉你：那里几点，与北京差多久。</p>
+        <a class="button button-primary" href="#converter">开始时间转换 <span aria-hidden="true">↗</span></a>
+        <span class="hero-footnote">6 个欧洲国家 · 自动识别夏令时</span>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-kicker">ONE MOMENT. DIFFERENT CLOCKS.</div>
+        <svg viewBox="0 0 440 236" class="clock-illustration">
+          <defs><pattern id="dot-pattern" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#cbd0c3"/></pattern></defs>
+          <rect width="440" height="236" fill="url(#dot-pattern)"/>
+          <path d="M54 179C111 246 238 229 350 74" fill="none" stroke="#c8cfbf" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M180 106C219 61 255 63 291 92" fill="none" stroke="#d58a50" stroke-width="2"/>
+          <circle cx="130" cy="112" r="91" fill="#edeede" stroke="#d3d9cb"/>
+          <circle cx="130" cy="112" r="73" fill="#214b40"/>
+          <g stroke="#a3bbac" stroke-width="2"><path d="M130 48v9M130 167v9M66 112h9M185 112h9M85 67l6 6M169 151l6 6M85 157l6-6M169 73l6-6"/></g>
+          <g stroke="#f7f5ec" stroke-linecap="round"><line id="hero-hour" x1="130" y1="112" x2="130" y2="77" stroke-width="5"/><line id="hero-minute" x1="130" y1="112" x2="130" y2="60" stroke-width="3"/></g><circle cx="130" cy="112" r="5" fill="#e9a76b"/>
+          <circle cx="317" cy="128" r="67" fill="#f9f5ea" stroke="#d5a478" stroke-width="1.5"/>
+          <g stroke="#b8b6a6" stroke-width="1.5"><path d="M317 71v8M317 177v8M260 128h8M366 128h8M277 88l5 5M352 163l5 5M277 168l5-5M352 93l5-5"/></g>
+          <g stroke="#214b40" stroke-linecap="round"><line id="hero-eu-hour" x1="317" y1="128" x2="317" y2="102" stroke-width="4"/><line id="hero-eu-minute" x1="317" y1="128" x2="317" y2="85" stroke-width="2.5"/></g><circle cx="317" cy="128" r="4" fill="#d88b52"/>
+          <circle cx="390" cy="48" r="5" fill="#d88b52"/><path d="M386 35v-6M401 48h6M380 38l-4-4M390 61v6" stroke="#d88b52" stroke-width="1.5"/>
+        </svg>
+        <div class="art-label art-beijing">北京 <span>UTC+8</span></div><div class="art-label art-europe">中欧 <span id="hero-eu-offset">UTC+2</span></div>
+        <div class="art-caption">同一刻，换个刻度。<span>↔</span></div>
+      </div>
+    </section>
+
+    <div class="season-banner"><span class="banner-icon" aria-hidden="true">✳</span><p id="season-summary">正在读取当前时区…</p><a href="#calendar" id="next-change">看看下一次换季 <span aria-hidden="true">↗</span></a></div>
+
+    <section id="clocks" class="section" aria-labelledby="clocks-title">
+      <div class="section-heading"><div><p class="section-index">01 / WORLD CLOCK</p><h2 id="clocks-title">此刻，七地同步。</h2></div><span class="live-label"><span class="status-dot"></span>实时更新 · 24 小时制</span></div>
+      <div id="world-clocks" class="world-clocks"></div>
+      <div class="utc-strip"><div><span class="utc-badge">UTC</span><strong>0 时区的时间</strong><time id="utc-clock">--:--:--</time><span id="utc-date" class="subtle"></span></div><a href="#learn">英国并非全年都是 0 时区 <span aria-hidden="true">↗</span></a></div>
+      <p class="section-note">荷兰、比利时、卢森堡、法国、德国采用相同的本土时间。英国的钟面时间比它们少一小时，例如中欧 12:00，英国 11:00。</p>
+    </section>
+
+    <section id="converter" class="section" aria-labelledby="converter-title">
+      <div class="section-heading"><div><p class="section-index">02 / TIME CONVERTER</p><h2 id="converter-title">把时间，换个地方。</h2></div><p class="heading-note">北京 → 欧洲，欧洲 → 北京。<br>同一个瞬间，所有时间一次看清。</p></div>
+      <div class="converter-panel">
+        <div class="panel-toolbar"><div class="direction-tabs" aria-label="转换方向"><button type="button" id="from-beijing" class="active" aria-pressed="true">北京时间 → 各国</button><button type="button" id="from-europe" aria-pressed="false">各国时间 → 北京</button></div><button type="button" id="use-now" class="text-button">◷ 使用当前时间</button></div>
+        <form id="conversion-form" class="conversion-form" novalidate>
+          <div class="field source-field"><label for="source-zone">这个时间属于哪里？</label><select id="source-zone" name="zone"></select></div>
+          <button type="button" id="reverse-direction" class="reverse-button" title="按同一时刻反向转换" aria-label="按同一时刻切换北京与欧洲的转换方向">⇄</button>
+          <div class="field"><label for="source-date">当地日期</label><input type="date" id="source-date" name="date" min="2000-01-01" max="2099-12-31" required></div>
+          <div class="field"><label for="source-time">当地时间 <span>24 小时制</span></label><input type="time" id="source-time" name="time" step="1" required></div>
+          <button class="button button-primary convert-button" type="submit">换算时间 <span aria-hidden="true">↗</span></button>
+        </form>
+        <p id="input-hint" class="input-hint">输入的是北京时间。我们会根据所选日期自动判断夏令时。</p>
+        <div id="conversion-status" class="conversion-status" role="status" aria-live="polite" hidden></div>
+        <div id="conversion-output">
+          <div class="result-heading"><span id="result-caption"></span><button type="button" id="copy-result" class="text-button" disabled>⧉ 复制全部结果</button></div>
+          <div id="conversion-results" class="conversion-results" aria-live="polite"></div>
+        </div>
+        <div class="converter-foot"><span class="check-icon" aria-hidden="true">✓</span> 自动识别夏令时 <span>·</span> 标出前一天 / 后一天 <span>·</span> 支持 2000—2099 年</div>
+      </div>
+    </section>
+
+    <section id="meeting" class="section" aria-labelledby="meeting-title">
+      <div class="section-heading"><div><p class="section-index">03 / FIND THE OVERLAP</p><h2 id="meeting-title">约个双方都舒服的时间。</h2></div><p class="heading-note">拖动北京时间，看看对方在做什么。</p></div>
+      <div class="meeting-panel">
+        <div class="meeting-top"><div class="meeting-selects"><div class="field"><label for="meeting-zone">和哪里约时间？</label><select id="meeting-zone"></select></div><div class="field"><label for="meeting-date">以北京日期为准</label><input type="date" id="meeting-date" min="2000-01-01" max="2099-12-31" required></div></div><div class="legend"><span><i class="legend-office"></i>常用办公时间</span><span><i class="legend-overlap"></i>双方时间重叠</span></div></div>
+        <div class="meeting-readout"><div><span class="meeting-location">🇨🇳 北京</span><strong id="meeting-beijing-time">16:00</strong></div><span class="meeting-arrow" aria-hidden="true">⟷</span><div><span id="meeting-location" class="meeting-location">🇩🇪 德国</span><strong id="meeting-foreign-time">10:00</strong></div><span id="meeting-fit" class="fit-badge"></span></div>
+        <p id="meeting-date-caption" class="meeting-date-caption"></p>
+        <div class="timeline"><div class="timeline-row"><span>北京</span><div id="timeline-beijing" class="timeline-track" aria-hidden="true"></div></div><div class="timeline-row"><span id="timeline-country">德国</span><div id="timeline-europe" class="timeline-track" aria-hidden="true"></div></div><div class="timeline-ticks"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div><label class="sr-only" for="meeting-slider">选择北京时间，每半小时一格</label><input id="meeting-slider" type="range" min="0" max="47" value="32" step="1"></div>
+        <div class="meeting-bottom"><p id="meeting-recommendation"></p><button type="button" id="meeting-to-converter" class="text-button">将选中时间放入转换器 ↗</button></div>
+        <p class="section-note">按双方当地 09:00—18:00 的常用办公时段估算；不判断当地节假日，周末会单独提示。</p>
+      </div>
+    </section>
+
+    <section id="learn" class="section learning-section" aria-labelledby="learn-title">
+      <div class="section-heading"><div><p class="section-index">04 / A LITTLE TIME KNOWLEDGE</p><h2 id="learn-title">不背时区，记住这三件事。</h2></div><span class="lesson-tag">从北京时间出发的小课堂</span></div>
+      <div class="lesson-grid">
+        <div class="lesson-questions">
+          <details open><summary><span class="lesson-number">01</span>UTC 是世界时间的“零刻度”<span class="details-plus" aria-hidden="true">+</span></summary><div class="lesson-answer">北京时间是 <strong>UTC+8</strong>：把 UTC 时间加 8 小时，就得到北京时间。<div class="example-equation">UTC 10:00 <span>＋ 8 小时</span> 北京 18:00</div>常说的“0 时区”“1 时区”，通常指 UTC+0、UTC+1。它们表示相对 UTC 的时差，并不等于一个国家全年固定的时间。</div></details>
+          <details><summary><span class="lesson-number">02</span>冬令时是标准时间，夏令时快一小时<span class="details-plus" aria-hidden="true">+</span></summary><div class="lesson-answer">“冬令时”通常指恢复标准时间。夏令时则把当地时钟往前拨一小时，所以欧洲夏天与北京的时差会缩小一小时。<p>当前规则下，所列欧洲地区在 <strong>3 月最后一个周日</strong>进入夏令时，在 <strong>10 月最后一个周日</strong>恢复标准时间。北京时间全年不拨钟。</p><p>前拨时，一段时间会被跳过；回拨时，一段时间会出现两次。转换器会帮你识别这两种情况。</p></div></details>
+          <details><summary><span class="lesson-number">03</span>中欧一起走，英国慢一小时<span class="details-plus" aria-hidden="true">+</span></summary><div class="lesson-answer">荷兰、比利时、卢森堡、法国和德国本土用同一套时间：<strong>冬天 UTC+1，夏天 UTC+2</strong>。<p>英国伦敦：<strong>冬天 UTC+0（GMT），夏天 UTC+1（BST）</strong>。所以，英国不是全年都在 0 时区。</p><p>按当前规则，无论冬夏，伦敦的钟面时间比巴黎、柏林和阿姆斯特丹少一小时：中欧 12:00，英国 11:00。</p></div></details>
+        </div>
+        <div class="season-lab"><div class="lab-header"><span class="eyebrow">TRY IT / 动手切换</span><div class="season-toggle"><button type="button" data-season="winter" aria-pressed="false">❄ 冬令时</button><button type="button" data-season="summer" class="active" aria-pressed="true">☀ 夏令时</button></div></div><h3>如果北京是下午 6 点…</h3><p class="lab-subtitle">同一个北京时间，换个季节会怎样？</p><div class="demo-clocks"><div><span>🇨🇳 北京</span><strong>18:00</strong><small>UTC+8 · 全年不变</small></div><span class="demo-arrow" aria-hidden="true">→</span><div><span>🇪🇺 中欧五国</span><strong id="demo-central-time">12:00</strong><small id="demo-central-offset">UTC+2 · CEST</small></div><div><span>🇬🇧 英国</span><strong id="demo-uk-time">11:00</strong><small id="demo-uk-offset">UTC+1 · BST</small></div></div><p id="demo-explanation" class="lab-explanation"></p><div class="lab-tip"><span aria-hidden="true">↳</span> 时区换了，时间刻度变了；同一刻并没有改变。</div></div>
+      </div>
+      <div class="quick-table-panel"><div class="quick-table-intro"><span class="eyebrow">YOUR CHEAT SHEET</span><h3>一张表，<br>记住差几小时。</h3><p>欧洲时间 = 北京时间 − 时差<br>跨过午夜，记得换日期。</p></div><div class="table-scroll"><table><caption class="sr-only">北京与各国冬令时和夏令时时差对照</caption><thead><tr><th scope="col">地区</th><th scope="col">标准时间 / 冬令时</th><th scope="col">夏令时</th></tr></thead><tbody><tr><th scope="row">🇨🇳 北京</th><td><strong>UTC+8</strong><small>你的时间基准</small></td><td><strong>UTC+8</strong><small>全年不变</small></td></tr><tr><th scope="row"><span class="country-list">荷兰 · 比利时 · 卢森堡<br>法国 · 德国</span></th><td><strong>UTC+1</strong><small>比北京晚 7 小时</small></td><td><strong>UTC+2</strong><small>比北京晚 6 小时</small></td></tr><tr><th scope="row">🇬🇧 英国</th><td><strong>UTC+0</strong><small>比北京晚 8 小时</small></td><td><strong>UTC+1</strong><small>比北京晚 7 小时</small></td></tr></tbody></table></div></div>
+    </section>
+
+    <section id="calendar" class="section" aria-labelledby="calendar-title"><div class="section-heading"><div><p class="section-index">05 / SEASONAL CALENDAR</p><h2 id="calendar-title">一年里，时钟什么时候拨？</h2></div><div class="year-control"><button type="button" id="previous-year" aria-label="查看上一年">←</button><span id="calendar-year">2026</span><button type="button" id="next-year" aria-label="查看下一年">→</button></div></div><div class="calendar-panel"><div id="year-months" class="year-months" aria-hidden="true"></div><div id="year-track" class="year-track" aria-label="全年标准时间与夏令时的分布"></div><div id="change-events" class="change-events"></div><p class="calendar-note">所列欧洲地区在同一时刻换季：UTC 01:00，也就是北京时间 09:00。远期日期按当前时区规则推算。</p></div></section>
+
+    <footer class="site-footer"><div class="footer-main"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">◷</span><strong>时差<span class="brand-en">TIME BRIDGE</span></strong></a><p>世界有不同的刻度，<br>你只需要一个起点。</p><a href="#top" class="back-top">回到顶部 ↑</a></div><div class="footer-notes"><p>时钟跟随设备时间；各国采用欧洲本土 / 首都时间。转换按所选日期及浏览器的时区规则计算。</p><div class="source-links"><span>规则来源</span><a href="https://www.gov.uk/when-do-the-clocks-change" target="_blank" rel="noopener noreferrer">英国政府 ↗</a><a href="https://transport.ec.europa.eu/transport-themes/summertime_en" target="_blank" rel="noopener noreferrer">欧盟委员会 ↗</a><a href="https://www.iana.org/time-zones" target="_blank" rel="noopener noreferrer">IANA 时区数据库 ↗</a></div></div></footer>
+  </main>
+  <dialog id="copy-dialog" class="copy-dialog" aria-labelledby="copy-title"><div class="dialog-top"><h3 id="copy-title">复制转换结果</h3><button type="button" id="close-copy-dialog" aria-label="关闭复制窗口">×</button></div><p>浏览器暂时无法自动复制。文字已选中，按 Ctrl+C / ⌘C，或长按复制即可。</p><label class="sr-only" for="copy-text">转换结果文本</label><textarea id="copy-text" readonly rows="11"></textarea></dialog>
+  <noscript><div class="noscript-note">请在浏览器中启用 JavaScript，以显示实时钟并使用时间转换。北京时间 UTC+8；中欧冬天 UTC+1、夏天 UTC+2；英国冬天 UTC+0、夏天 UTC+1。</div></noscript>
+</body>
+</html>
