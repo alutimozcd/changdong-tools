@@ -134,3 +134,25 @@ export function officeSlots(date, id) {
   }
   return slots;
 }
+
+// Parse the transport unit explicitly; a Unix timestamp denotes one instant,
+// so it has no source timezone and daylight saving applies only to the display.
+export function parseTimestamp(input, unit = 'auto') {
+  const value = String(input).trim();
+  if (!value) throw new RangeError('请输入 Unix 时间戳。');
+  let selected = unit;
+  if (selected === 'auto') {
+    if (/^(?:0|[0-9]{9,10})(?:\.[0-9]{1,3})?$/.test(value)) selected = 'seconds';
+    else if (/^[0-9]{13}$/.test(value)) selected = 'milliseconds';
+    else throw new RangeError('无法自动识别单位：常用 10 位为秒、13 位为毫秒，其他长度请手动选择。');
+  }
+  let milliseconds;
+  if (selected === 'seconds' && /^[0-9]{1,10}(?:\.[0-9]{1,3})?$/.test(value)) {
+    const [whole, fraction = ''] = value.split('.');
+    milliseconds = BigInt(whole) * 1000n + BigInt(fraction.padEnd(3, '0'));
+  } else if (selected === 'milliseconds' && /^[0-9]{1,13}$/.test(value)) milliseconds = BigInt(value);
+  else throw new RangeError('请输入有效数字：毫秒使用整数，秒最多保留 3 位小数。');
+  if (milliseconds < 0n || milliseconds >= 4102444800000n) throw new RangeError('时间戳支持 UTC 1970—2099 年，请检查数值和单位。');
+  const epoch = Number(milliseconds);
+  return {epoch, unit:selected, millisecond:epoch % 1000};
+}

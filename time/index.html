@@ -14,7 +14,7 @@
   <a class="skip-link" href="#converter">跳到时间转换</a>
   <header class="site-header">
     <a class="brand" href="#top" aria-label="时差首页"><span class="brand-mark" aria-hidden="true">◷</span><strong>时差<span class="brand-en">TIME BRIDGE</span></strong></a>
-    <nav aria-label="主导航"><a href="#clocks">现在几点</a><a href="#converter">时间转换</a><a href="#meeting">约个好时间</a><a href="#learn">时区小课堂 <span aria-hidden="true">↗</span></a></nav>
+    <nav aria-label="主导航"><a href="#clocks">现在几点</a><a href="#converter">时间转换</a><a href="#timestamp">时间戳转换</a><a href="#meeting">约个好时间</a><a href="#learn">时区小课堂 <span aria-hidden="true">↗</span></a></nav>
     <span class="header-note"><span class="status-dot"></span>以北京为起点</span>
   </header>
 
@@ -78,8 +78,28 @@
       </div>
     </section>
 
+    <section id="timestamp" class="section" aria-labelledby="timestamp-title">
+      <div class="section-heading"><div><p class="section-index">03 / UNIX TIMESTAMP</p><h2 id="timestamp-title">一个时间戳，所有当地时间。</h2></div><p class="heading-note">粘贴日志里的时间戳，直接看各国时间。<br>支持秒、毫秒，保留毫秒精度。</p></div>
+      <div class="converter-panel timestamp-panel">
+        <div class="panel-toolbar"><strong>Unix 时间戳 → 北京与欧洲</strong><button type="button" id="timestamp-now" class="text-button">◷ 使用当前时间戳</button></div>
+        <form id="timestamp-form" class="timestamp-form" novalidate>
+          <div class="field timestamp-value"><label for="timestamp-input">Unix 时间戳</label><input id="timestamp-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="例如：1789284196259" required></div>
+          <div class="field"><label for="timestamp-unit">时间戳单位</label><select id="timestamp-unit"><option value="auto">自动识别</option><option value="milliseconds">毫秒（Java 常用）</option><option value="seconds">秒（Unix 常用）</option></select></div>
+          <button type="submit" class="button button-primary">转换时间戳 ↗</button>
+        </form>
+        <p class="input-hint">常用 10 位时间戳为秒，13 位为毫秒。时间戳表示同一个瞬间，各国时间会根据该日期自动识别夏令时。</p>
+        <p id="timestamp-status" class="timestamp-status" role="status" aria-live="polite"></p>
+        <div id="timestamp-output" hidden>
+          <div class="timestamp-summary"><span>毫秒 <code id="timestamp-ms"></code></span><span>秒 <code id="timestamp-seconds"></code></span><span>UTC <code id="timestamp-iso"></code></span></div>
+          <div class="result-heading"><span>对应各地时间 · 日期以北京时间为参照</span><button type="button" id="timestamp-copy" class="text-button">⧉ 复制时间戳转换结果</button></div>
+          <div id="timestamp-results" class="conversion-results"></div>
+        </div>
+        <div class="converter-foot"><span class="check-icon" aria-hidden="true">✓</span> UTC 1970—2099 年 <span>·</span> 自动识别夏令时 <span>·</span> 保留毫秒</div>
+      </div>
+    </section>
+
     <section id="meeting" class="section" aria-labelledby="meeting-title">
-      <div class="section-heading"><div><p class="section-index">03 / FIND THE OVERLAP</p><h2 id="meeting-title">约个双方都舒服的时间。</h2></div><p class="heading-note">拖动北京时间，看看对方在做什么。</p></div>
+      <div class="section-heading"><div><p class="section-index">04 / FIND THE OVERLAP</p><h2 id="meeting-title">约个双方都舒服的时间。</h2></div><p class="heading-note">拖动北京时间，看看对方在做什么。</p></div>
       <div class="meeting-panel">
         <div class="meeting-top"><div class="meeting-selects"><div class="field"><label for="meeting-zone">和哪里约时间？</label><select id="meeting-zone"></select></div><div class="field"><label for="meeting-date">以北京日期为准</label><input type="date" id="meeting-date" min="2000-01-01" max="2099-12-31" required></div></div><div class="legend"><span><i class="legend-office"></i>常用办公时间</span><span><i class="legend-overlap"></i>双方时间重叠</span></div></div>
         <div class="meeting-readout"><div><span class="meeting-location">🇨🇳 北京</span><strong id="meeting-beijing-time">16:00</strong></div><span class="meeting-arrow" aria-hidden="true">⟷</span><div><span id="meeting-location" class="meeting-location">🇩🇪 德国</span><strong id="meeting-foreign-time">10:00</strong></div><span id="meeting-fit" class="fit-badge"></span></div>
@@ -91,7 +111,7 @@
     </section>
 
     <section id="learn" class="section learning-section" aria-labelledby="learn-title">
-      <div class="section-heading"><div><p class="section-index">04 / A LITTLE TIME KNOWLEDGE</p><h2 id="learn-title">不背时区，记住这三件事。</h2></div><span class="lesson-tag">从北京时间出发的小课堂</span></div>
+      <div class="section-heading"><div><p class="section-index">05 / A LITTLE TIME KNOWLEDGE</p><h2 id="learn-title">不背时区，记住这三件事。</h2></div><span class="lesson-tag">从北京时间出发的小课堂</span></div>
       <div class="lesson-grid">
         <div class="lesson-questions">
           <details open><summary><span class="lesson-number">01</span>UTC 是世界时间的“零刻度”<span class="details-plus" aria-hidden="true">+</span></summary><div class="lesson-answer">北京时间是 <strong>UTC+8</strong>：把 UTC 时间加 8 小时，就得到北京时间。<div class="example-equation">UTC 10:00 <span>＋ 8 小时</span> 北京 18:00</div>常说的“0 时区”“1 时区”，通常指 UTC+0、UTC+1。它们表示相对 UTC 的时差，并不等于一个国家全年固定的时间。</div></details>
@@ -103,7 +123,7 @@
       <div class="quick-table-panel"><div class="quick-table-intro"><span class="eyebrow">YOUR CHEAT SHEET</span><h3>一张表，<br>记住差几小时。</h3><p>欧洲时间 = 北京时间 − 时差<br>跨过午夜，记得换日期。</p></div><div class="table-scroll"><table><caption class="sr-only">北京与各国冬令时和夏令时时差对照</caption><thead><tr><th scope="col">地区</th><th scope="col">标准时间 / 冬令时</th><th scope="col">夏令时</th></tr></thead><tbody><tr><th scope="row">🇨🇳 北京</th><td><strong>UTC+8</strong><small>你的时间基准</small></td><td><strong>UTC+8</strong><small>全年不变</small></td></tr><tr><th scope="row"><span class="country-list">荷兰 · 比利时 · 卢森堡<br>法国 · 德国</span></th><td><strong>UTC+1</strong><small>比北京晚 7 小时</small></td><td><strong>UTC+2</strong><small>比北京晚 6 小时</small></td></tr><tr><th scope="row">🇬🇧 英国</th><td><strong>UTC+0</strong><small>比北京晚 8 小时</small></td><td><strong>UTC+1</strong><small>比北京晚 7 小时</small></td></tr></tbody></table></div></div>
     </section>
 
-    <section id="calendar" class="section" aria-labelledby="calendar-title"><div class="section-heading"><div><p class="section-index">05 / SEASONAL CALENDAR</p><h2 id="calendar-title">一年里，时钟什么时候拨？</h2></div><div class="year-control"><button type="button" id="previous-year" aria-label="查看上一年">←</button><span id="calendar-year">2026</span><button type="button" id="next-year" aria-label="查看下一年">→</button></div></div><div class="calendar-panel"><div id="year-months" class="year-months" aria-hidden="true"></div><div id="year-track" class="year-track" aria-label="全年标准时间与夏令时的分布"></div><div id="change-events" class="change-events"></div><p class="calendar-note">所列欧洲地区在同一时刻换季：UTC 01:00，也就是北京时间 09:00。远期日期按当前时区规则推算。</p></div></section>
+    <section id="calendar" class="section" aria-labelledby="calendar-title"><div class="section-heading"><div><p class="section-index">06 / SEASONAL CALENDAR</p><h2 id="calendar-title">一年里，时钟什么时候拨？</h2></div><div class="year-control"><button type="button" id="previous-year" aria-label="查看上一年">←</button><span id="calendar-year">2026</span><button type="button" id="next-year" aria-label="查看下一年">→</button></div></div><div class="calendar-panel"><div id="year-months" class="year-months" aria-hidden="true"></div><div id="year-track" class="year-track" aria-label="全年标准时间与夏令时的分布"></div><div id="change-events" class="change-events"></div><p class="calendar-note">所列欧洲地区在同一时刻换季：UTC 01:00，也就是北京时间 09:00。远期日期按当前时区规则推算。</p></div></section>
 
     <footer class="site-footer"><div class="footer-main"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">◷</span><strong>时差<span class="brand-en">TIME BRIDGE</span></strong></a><p>世界有不同的刻度，<br>你只需要一个起点。</p><a href="#top" class="back-top">回到顶部 ↑</a></div><div class="footer-notes"><p>时钟跟随设备时间；各国采用欧洲本土 / 首都时间。转换按所选日期及浏览器的时区规则计算。</p><div class="source-links"><span>规则来源</span><a href="https://www.gov.uk/when-do-the-clocks-change" target="_blank" rel="noopener noreferrer">英国政府 ↗</a><a href="https://transport.ec.europa.eu/transport-themes/summertime_en" target="_blank" rel="noopener noreferrer">欧盟委员会 ↗</a><a href="https://www.iana.org/time-zones" target="_blank" rel="noopener noreferrer">IANA 时区数据库 ↗</a></div></div></footer>
   </main>

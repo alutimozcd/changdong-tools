@@ -1,4 +1,4 @@
-import { ZONES, zone, partsAt, offsetAt, resolveLocal, convertInstant, transitionsForYear, officeSlots } from './core.mjs';
+import { ZONES, zone, partsAt, offsetAt, resolveLocal, convertInstant, transitionsForYear, officeSlots, parseTimestamp } from './core.mjs';
 
 const $ = id => document.getElementById(id);
 const DAY = 86400000;
@@ -8,7 +8,8 @@ let selectedEpoch = null;
 let foldChoice = null;
 let lastConversion = [];
 let calendarYear = new Date().getUTCFullYear();
-let clipboardTimer;
+let timestampRows = [];
+let timestampParsed = null;
 
 function offsetLabel(minutes, compact = false) {
   const sign = minutes >= 0 ? '+' : '−';
@@ -171,15 +172,14 @@ function conversionText() {
   return `时差 · 时间转换\n输入：${source.label} ${source.date} ${source.time} (${offsetLabel(source.offset)})\n\n` + lastConversion.map(c => `${c.label}：${c.date} ${c.time} ${offsetLabel(c.offset)} · ${c.season} · ${dayLabel(c.dayDelta)}`).join('\n');
 }
 
-async function copyResults() {
-  const text = conversionText();
+async function copyText(text, button) {
   if (!text) return;
+  const label = button.textContent;
   try {
     if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
     await navigator.clipboard.writeText(text);
-    $('copy-result').textContent = '✓ 已复制全部结果';
-    clearTimeout(clipboardTimer);
-    clipboardTimer = setTimeout(() => { $('copy-result').textContent = '⧉ 复制全部结果'; }, 2400);
+    button.textContent = '✓ 已复制全部结果';
+    setTimeout(() => { button.textContent = label; }, 2400);
   } catch {
     $('copy-text').value = text;
     const dialog = $('copy-dialog');
@@ -188,6 +188,46 @@ async function copyResults() {
     $('copy-text').focus();
     $('copy-text').select();
   }
+}
+function copyResults() { return copyText(conversionText(), $('copy-result')); }
+
+function runTimestamp() {
+  timestampRows = []; timestampParsed = null;
+  $('timestamp-output').hidden = true;
+  $('timestamp-copy').disabled = true;
+  try {
+    const parsed = parseTimestamp($('timestamp-input').value, $('timestamp-unit').value);
+    timestampParsed = parsed;
+    timestampRows = convertInstant(parsed.epoch, 'cn');
+    const fraction = String(parsed.millisecond).padStart(3, '0');
+    $('timestamp-ms').textContent = String(parsed.epoch);
+    $('timestamp-seconds').textContent = `${Math.floor(parsed.epoch / 1000)}${parsed.millisecond ? '.' + fraction : ''}`;
+    $('timestamp-iso').textContent = new Date(parsed.epoch).toISOString();
+    $('timestamp-status').className = 'timestamp-status';
+    $('timestamp-status').textContent = `已按${parsed.unit === 'milliseconds' ? '毫秒' : '秒'}解析 · 转换成功`;
+    $('timestamp-results').innerHTML = timestampRows.map(c => `<article class="result-card ${c.id === 'cn' ? 'result-beijing' : ''}" aria-label="${c.label}时间戳转换结果">
+      <h3 class="result-card-top"><span aria-hidden="true">${c.flag}</span> ${c.label}</h3>
+      <time class="result-time" datetime="${new Date(parsed.epoch).toISOString()}">${c.time}.${fraction}</time>
+      <p class="result-date">${c.date}<span class="day-tag ${c.dayDelta ? 'changed' : ''}">${dayLabel(c.dayDelta)}</span></p>
+      <p class="result-offset">${offsetLabel(c.offset, true)} · ${c.abbreviation}<span class="result-season">${c.id === 'utc' ? '统一时间' : c.id === 'cn' ? '全年不变' : c.summer ? '夏令时' : '标准时间'}</span></p>
+    </article>`).join('');
+    $('timestamp-output').hidden = false;
+    $('timestamp-copy').disabled = false;
+  } catch (error) {
+    $('timestamp-status').className = 'timestamp-status error';
+    $('timestamp-status').textContent = error.message;
+  }
+}
+function setCurrentTimestamp() {
+  $('timestamp-input').value = String(Date.now());
+  $('timestamp-unit').value = 'milliseconds';
+  runTimestamp();
+}
+function copyTimestamp() {
+  if (!timestampParsed || !timestampRows.length) return;
+  const fraction = String(timestampParsed.millisecond).padStart(3, '0');
+  const text = `时间戳转换\n毫秒：${timestampParsed.epoch}\nUTC：${new Date(timestampParsed.epoch).toISOString()}\n\n` + timestampRows.map(c => `${c.label}：${c.date} ${c.time}.${fraction} ${offsetLabel(c.offset)} · ${c.season}`).join('\n');
+  return copyText(text, $('timestamp-copy'));
 }
 
 function renderMeeting() {
@@ -277,6 +317,11 @@ function renderCalendar() {
 }
 
 function connectEvents() {
+  $('timestamp-form').addEventListener('submit', event => { event.preventDefault(); runTimestamp(); });
+  $('timestamp-now').addEventListener('click', setCurrentTimestamp);
+  $('timestamp-unit').addEventListener('change', runTimestamp);
+  $('timestamp-input').addEventListener('input', () => { timestampRows = []; timestampParsed = null; $('timestamp-output').hidden = true; $('timestamp-copy').disabled = true; $('timestamp-status').className = 'timestamp-status'; $('timestamp-status').textContent = '点击「转换时间戳」查看各国时间。'; });
+  $('timestamp-copy').addEventListener('click', copyTimestamp);
   $('conversion-form').addEventListener('submit', event => { event.preventDefault(); runConversion(); });
   for (const id of ['source-date', 'source-time', 'source-zone']) $(id).addEventListener('change', () => runConversion(true));
   for (const id of ['source-date', 'source-time']) $(id).addEventListener('input', () => runConversion(true));
@@ -338,6 +383,7 @@ function initialize() {
   renderLesson(offsetAt(now, 'de') > 60 ? 'summer' : 'winter');
   renderCalendar();
   connectEvents();
+  setCurrentTimestamp();
   setInterval(updateLiveClocks, 1000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) updateLiveClocks(); });
 }
